@@ -142,8 +142,10 @@ mod tests {
     #[test]
     fn deposit_then_withdraw() {
         let mut eng = Engine::new();
-        eng.process(tx(TxType::Deposit, 1, 1, Some(dec!(2.0)))).unwrap();
-        eng.process(tx(TxType::Withdrawal, 1, 2, Some(dec!(1.5)))).unwrap();
+        eng.process(tx(TxType::Deposit, 1, 1, Some(dec!(2.0))))
+            .unwrap();
+        eng.process(tx(TxType::Withdrawal, 1, 2, Some(dec!(1.5))))
+            .unwrap();
 
         let acc = &eng.accounts[&1];
         assert_eq!(acc.available, dec!(0.5));
@@ -154,10 +156,12 @@ mod tests {
     #[test]
     fn dispute_then_chargeback_locks_account() {
         let mut eng = Engine::new();
-        eng.process(tx(TxType::Deposit, 1, 1, Some(dec!(3.0)))).unwrap();
+        eng.process(tx(TxType::Deposit, 1, 1, Some(dec!(3.0))))
+            .unwrap();
         eng.process(tx(TxType::Dispute, 1, 1, None)).unwrap();
         eng.process(tx(TxType::Chargeback, 1, 1, None)).unwrap();
-        eng.process(tx(TxType::Deposit, 1, 2, Some(dec!(1.0)))).unwrap(); // ignored
+        eng.process(tx(TxType::Deposit, 1, 2, Some(dec!(1.0))))
+            .unwrap(); // ignored
 
         let acc = &eng.accounts[&1];
         assert_eq!(acc.available, dec!(0));
@@ -168,7 +172,8 @@ mod tests {
     #[test]
     fn duplicate_dispute_is_ignored() {
         let mut eng = Engine::new();
-        eng.process(tx(TxType::Deposit, 1, 10, Some(dec!(5.0)))).unwrap();
+        eng.process(tx(TxType::Deposit, 1, 10, Some(dec!(5.0))))
+            .unwrap();
         eng.process(tx(TxType::Dispute, 1, 10, None)).unwrap();
         eng.process(tx(TxType::Dispute, 1, 10, None)).unwrap(); // duplicate
 
@@ -180,8 +185,10 @@ mod tests {
     #[test]
     fn negative_or_zero_amount_is_rejected() {
         let mut eng = Engine::new();
-        eng.process(tx(TxType::Deposit, 1, 20, Some(dec!(0)))).unwrap();
-        eng.process(tx(TxType::Withdrawal, 1, 21, Some(dec!(-1.0)))).unwrap();
+        eng.process(tx(TxType::Deposit, 1, 20, Some(dec!(0))))
+            .unwrap();
+        eng.process(tx(TxType::Withdrawal, 1, 21, Some(dec!(-1.0))))
+            .unwrap();
 
         assert!(eng.accounts.is_empty());
     }
