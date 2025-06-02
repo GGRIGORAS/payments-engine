@@ -21,11 +21,11 @@ jobs:
           profile: minimal
           override: true
 
-      # --- NEW: supply-chain security scan ---------------------------
       - name: Audit dependencies
         uses: actions-rs/audit-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # --- style, lint, tests ---------------------------------------
       - name: Format check
         run: cargo fmt --all -- --check
 
