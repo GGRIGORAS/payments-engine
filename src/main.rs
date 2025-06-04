@@ -17,10 +17,9 @@ use tracing_subscriber::FmtSubscriber;
 
 fn main() -> Result<()> {
     // ---------------------------------------------------------------- logging
-    // send all tracing output to STDERR, keeping STDOUT clean for CSV
     let subscriber = FmtSubscriber::builder()
         .with_target(false)
-        .with_writer(io::stderr) // <-- key line: logs → stderr
+        .with_writer(io::stderr) // logs → STDERR
         .finish();
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
@@ -42,18 +41,19 @@ fn main() -> Result<()> {
         .allow_external_subcommands(true)
         .get_matches();
 
-    // ---------------------------------------------------- positional fallbacks
+    // ---------------------------------------------------- positional fallback
     let pos: Vec<PathBuf> = env::args_os().skip(1).map(PathBuf::from).collect();
 
     let in_path = matches
         .get_one::<String>("input")
         .map(PathBuf::from)
-        .or_else(|| pos.get(0).cloned());
+        // only clippy::get_first cares about index 0
+        .or_else(|| pos.first().cloned());
 
     let out_path = matches
         .get_one::<String>("output")
         .map(PathBuf::from)
-        .or_else(|| pos.get(1).cloned());
+        .or_else(|| pos.get(1).cloned()); // index 1 is fine
 
     let infile = match in_path {
         Some(p) => File::open(&p)?,
@@ -85,8 +85,8 @@ fn main() -> Result<()> {
 
     let mut wtr = WriterBuilder::new().has_headers(true).from_writer(sink);
 
-    // header row
-    wtr.write_record(&["client", "available", "held", "total", "locked"])?;
+    // header row (no needless borrow)
+    wtr.write_record(["client", "available", "held", "total", "locked"])?;
 
     let mut clients: Vec<_> = engine.accounts.iter().collect();
     clients.sort_by_key(|(id, _)| *id);

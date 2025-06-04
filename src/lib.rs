@@ -1,3 +1,5 @@
+#![allow(clippy::new_without_default)]
+
 //! Public API for the payments engine crate.
 
 pub mod engine;
