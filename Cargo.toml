@@ -1,14 +1,27 @@
 [package]
-name = "payments_engine"
-version = "0.1.0"
-edition = "2024"
+name        = "payments_engine"
+version     = "0.1.0"
+edition     = "2024"
+description = "Toy payments‐engine that streams a CSV of transactions and prints closing balances."
+license     = "MIT OR Apache-2.0"
+# repository  = "https://github.com/GGRIGORAS/payments-engine"   # ← uncomment if public
 
 [dependencies]
-anyhow = "1.0.98"
-clap = { version = "4.5.39", features = ["derive"] }
-csv = "1.3.1"
-rust_decimal = { version = "1.37.1", features = ["serde"] }
-serde = { version = "1.0.219", features = ["derive"] }
+anyhow           = "1"
+csv              = "1.3"
+serde            = { version = "1", features = ["derive"] }
+rust_decimal     = { version = "1.37", default-features = false, features = ["serde"] }
+rust_decimal_macros = "1.37"          # handy dec!(…) macro for tests
+clap             = { version = "4.5", features = ["derive"] }
+tracing          = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt"] }
+
+[features]
+default        = []                     # keeps crate lean for downstreams
+serde-support  = ["rust_decimal/serde"] # opt-in re-export
 
 [dev-dependencies]
-rust_decimal_macros = "1.37.1"
+criterion = "0.5"                       # (optional) benchmarking
+
+[profile.release]
+lto = "thin"
