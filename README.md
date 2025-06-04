@@ -1,7 +1,7 @@
 # Payments Engine — Take-Home Exercise
 
 A small Rust CLI that streams a CSV list of transactions and prints the closing
-balance for every client, exactly as required in Kraken’s **toy payments
+balance for every client, exactly as required  **toy payments
 engine** brief.
 
 | Command                                           | Purpose                                                         |
